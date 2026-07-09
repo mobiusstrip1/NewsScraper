@@ -1,0 +1,9 @@
+﻿feedparser
+anthropic
+python-dotenv
+requests
+PyYAML
+fastapi
+uvicorn
+streamlit
+

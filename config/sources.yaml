@@ -1,0 +1,29 @@
+﻿sources:
+  - name: TechCrunch AI
+    url: https://techcrunch.com/category/artificial-intelligence/feed/
+    category_hint: mixed
+  - name: TechCrunch Funding
+    url: https://techcrunch.com/tag/funding/feed/
+    category_hint: business
+  - name: VentureBeat AI
+    url: https://venturebeat.com/category/ai/feed/
+    category_hint: mixed
+  - name: The Verge
+    url: https://www.theverge.com/rss/index.xml
+    category_hint: tech
+  - name: MIT Technology Review
+    url: https://www.technologyreview.com/feed/
+    category_hint: tech
+  - name: Ars Technica
+    url: https://feeds.arstechnica.com/arstechnica/index
+    category_hint: tech
+  - name: IEEE Spectrum
+    url: https://spectrum.ieee.org/feeds/feed.rss
+    category_hint: tech
+  - name: Hacker News AI/Robotics
+    url: https://hnrss.org/newest?q=AI+OR+robotics+OR+humanoid
+    category_hint: mixed
+  - name: OpenAI Blog
+    url: https://openai.com/blog/rss.xml
+    category_hint: mixed
+
