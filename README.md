@@ -68,13 +68,31 @@ streamlit run web/app.py
 - 详情页（摘要 + 原文链接）
 - 历史页（占位，可按日期扩展）
 
-## 7. 验收建议
+## 7. Bark 推送（手机直接看正文）
+
+1. iPhone 安装 Bark，复制 App 首页显示的 Key。
+2. 在 `.env` 填写 `BARK_KEY=你的Key`。
+3. 先测连通：
+   ```bash
+   python src/notify.py
+   ```
+4. 跑主流程后会推送**完整摘要正文**（不是仅“已生成X条”）：
+   ```bash
+   python src/main.py
+   ```
+
+推送说明：
+- 使用 Bark POST 接口发送正文，并开启 `isArchive=1`，可在 Bark App 历史里回看。
+- 正文过长会自动拆成多条（标题会显示 `1/3`、`2/3`）。
+- 推送内容与 `digest/YYYY-MM-DD.md` 一致。
+
+## 8. 验收建议
 
 - 连续 3 天观察 `logs/run.log` 是否每日稳定执行。
-- 每日确认 Bark 是否收到通知。
+- 每日确认 Bark 是否收到“今日AI资讯（商业X·科技Y）”及正文内容。
 - 抽查 `data/news.db` 中 10 条分类结果质量。
 
-## 8. `.env` 实例填写（Qwen）
+## 9. `.env` 实例填写（Qwen）
 
 ```env
 LLM_PROVIDER=openai_compatible
@@ -96,7 +114,7 @@ LLM_PROVIDER=anthropic
 ANTHROPIC_API_KEY=your-claude-key
 ```
 
-## 9. 一次完整演练清单（本地）
+## 10. 一次完整演练清单（本地）
 
 1. **准备环境变量**
    - `copy .env.example .env`
@@ -108,7 +126,7 @@ ANTHROPIC_API_KEY=your-claude-key
    - 查看 `digest/YYYY-MM-DD.md` 是否有“商业/科技”分组
    - 检查 `data/news.db` 已新增文章
 4. **验证推送**
-   - 手机 Bark 收到“今日AI资讯摘要已生成”通知
+   - 手机 Bark 收到完整摘要正文（可点开查看，历史可回看）
 5. **启动 API（7800）**
    - `python -m uvicorn src.api:app --host 127.0.0.1 --port 7800`
    - 浏览器打开 `http://127.0.0.1:7800/docs`

@@ -47,6 +47,28 @@ def filter_new_articles(conn: sqlite3.Connection, articles: list[Article]) -> li
     return new_items
 
 
+def get_articles_for_date(conn: sqlite3.Connection, target_date: str) -> list[dict]:
+    rows = conn.execute(
+        '''
+        SELECT title, source, category, ai_summary, importance
+        FROM articles
+        WHERE substr(created_at, 1, 10) = ?
+        ORDER BY importance DESC, published_time DESC
+        ''',
+        (target_date,),
+    ).fetchall()
+    return [
+        {
+            'title': row[0],
+            'source': row[1],
+            'category': row[2],
+            'ai_summary': row[3],
+            'importance': row[4],
+        }
+        for row in rows
+    ]
+
+
 def upsert_article(conn: sqlite3.Connection, article: Article) -> None:
     h = hash_link(article.link)
     conn.execute(

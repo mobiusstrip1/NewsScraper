@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 def _stars(importance: int) -> str:
-    return '?' * max(1, min(5, importance))
+    return '★' * max(1, min(5, importance))
 
 
 def build_digest_text(rows: list[dict]) -> str:
@@ -20,16 +20,23 @@ def build_digest_text(rows: list[dict]) -> str:
     biz = groups.get('商业', [])
     tech = groups.get('科技', [])
 
-    lines.append(f'?? 商业类 (共{len(biz)}条)')
+    lines.append(f'【商业】共{len(biz)}条')
     for item in biz:
-        lines.append(f"{_stars(item['importance'])} [{item['title']}] - {item['ai_summary']} - {item['source']}")
+        summary = (item.get('ai_summary') or '').strip() or item['title']
+        lines.append(f"{_stars(item['importance'])} {item['title']}")
+        lines.append(f"   {summary} | {item['source']}")
     lines.append('')
 
-    lines.append(f'?? 科技类 (共{len(tech)}条)')
+    lines.append(f'【科技】共{len(tech)}条')
     for item in tech:
-        lines.append(f"{_stars(item['importance'])} [{item['title']}] - {item['ai_summary']} - {item['source']}")
+        summary = (item.get('ai_summary') or '').strip() or item['title']
+        lines.append(f"{_stars(item['importance'])} {item['title']}")
+        lines.append(f"   {summary} | {item['source']}")
 
-    return '\n'.join(lines).strip()
+    text = '\n'.join(lines).strip()
+    if not text:
+        return '今日暂无 importance>=2 的资讯。'
+    return text
 
 
 def write_digest_file(text: str, date: datetime | None = None) -> Path:
@@ -38,4 +45,3 @@ def write_digest_file(text: str, date: datetime | None = None) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text, encoding='utf-8')
     return out
-

@@ -1,15 +1,15 @@
-﻿import json
-import logging
+﻿import logging
 import os
 from collections import Counter
+from datetime import date
 
 from dotenv import load_dotenv
 
 from classify import Classifier
-from dedupe import ensure_schema, filter_new_articles, get_conn, upsert_article
+from dedupe import ensure_schema, filter_new_articles, get_articles_for_date, get_conn, upsert_article
 from digest import build_digest_text, write_digest_file
 from fetch import fetch_recent_articles
-from notify import send_daily_notice
+from notify import send_daily_digest
 
 
 logging.basicConfig(
@@ -34,7 +34,6 @@ def run() -> None:
     new_articles = filter_new_articles(conn, fetched)
 
     classifier = Classifier()
-    rows_for_digest: list[dict] = []
 
     for article in new_articles:
         result = classifier.classify(article)
@@ -43,23 +42,26 @@ def run() -> None:
         article.importance = result['importance']
         article.tags = result['tags']
         upsert_article(conn, article)
-        rows_for_digest.append(
-            {
-                'title': article.title,
-                'source': article.source,
-                'category': article.category,
-                'ai_summary': article.ai_summary,
-                'importance': article.importance,
-            }
-        )
 
-    digest_text = build_digest_text(rows_for_digest)
+    today = date.today().isoformat()
+    today_rows = get_articles_for_date(conn, today)
+    digest_text = build_digest_text(today_rows)
     out = write_digest_file(digest_text)
 
-    counter = Counter(item['category'] for item in rows_for_digest)
-    send_daily_notice(counter.get('商业', 0), counter.get('科技', 0))
+    counter = Counter(item['category'] for item in today_rows if (item.get('importance') or 0) >= 2)
+    sent = send_daily_digest(
+        digest_text,
+        counter.get('商业', 0),
+        counter.get('科技', 0),
+    )
 
-    logging.info('Fetched=%s New=%s Digest=%s', len(fetched), len(new_articles), out)
+    logging.info(
+        'Fetched=%s New=%s Digest=%s BarkSent=%s',
+        len(fetched),
+        len(new_articles),
+        out,
+        sent,
+    )
 
 
 if __name__ == '__main__':
