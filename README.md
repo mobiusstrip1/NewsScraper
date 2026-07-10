@@ -2,15 +2,20 @@
 
 ## 1. 安装与初始化
 
+### macOS
+
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+chmod +x scripts/*.sh
+./scripts/setup_venv.sh
+source .venv/bin/activate
+cp .env.example .env
 ```
 
-复制环境变量模板并填写：
+### Windows
 
-```bash
+```bat
+scripts\setup_venv.bat
+.venv\Scripts\activate.bat
 copy .env.example .env
 ```
 
@@ -21,8 +26,20 @@ copy .env.example .env
 
 ## 2. 阶段一：运行全链路
 
+### macOS / Windows（通用）
+
 ```bash
 python src/main.py
+```
+
+或使用跨平台脚本（自动切到项目根目录）：
+
+```bash
+# macOS
+./scripts/run_daily.sh
+
+# Windows
+scripts\run_daily.bat
 ```
 
 流程：`fetch -> dedupe -> classify -> digest -> notify`
@@ -32,22 +49,56 @@ python src/main.py
 - 日摘要: `digest/YYYY-MM-DD.md`
 - 日志: `logs/run.log`
 
-## 3. Windows 定时任务（每日 08:00）
+## 3. 定时任务（每日 08:00）
+
+### macOS（launchd）
 
 ```bash
-schtasks /Create /SC DAILY /TN "AINewsDigest" /TR "cmd /c cd /d E:\SA文档\best_practice\NewsScraper && .venv\Scripts\python src\main.py >> logs\run.log 2>&1" /ST 08:00
+chmod +x scripts/install_schedule_mac.sh
+./scripts/install_schedule_mac.sh
+```
+
+查看状态：
+
+```bash
+launchctl print gui/$(id -u)/com.newsscraper.daily
+```
+
+卸载：
+
+```bash
+launchctl bootout gui/$(id -u)/com.newsscraper.daily
+rm ~/Library/LaunchAgents/com.newsscraper.daily.plist
+```
+
+说明：Mac 若到点处于睡眠，任务会在唤醒后补跑（与 cron 不同）。
+
+### Windows（任务计划程序）
+
+```bat
+scripts\install_schedule_win.bat
 ```
 
 查看任务：
 
-```bash
+```bat
 schtasks /Query /TN "AINewsDigest" /V /FO LIST
 ```
 
-## 4. 阶段二：API（FastAPI）
+删除任务：
+
+```bat
+schtasks /Delete /TN "AINewsDigest" /F
+```
+
+## 4. 阶段二：API（FastAPI，端口 7800）
 
 ```bash
-uvicorn src.api:app --reload
+# macOS
+./scripts/start_api.sh
+
+# Windows
+scripts\start_api.bat
 ```
 
 接口：
@@ -55,10 +106,14 @@ uvicorn src.api:app --reload
 - `GET /digest/{date}`
 - `GET /digest?category=商业&days=7`
 
-## 5. 阶段三：Web（Streamlit）
+## 5. 阶段三：Web（Streamlit，端口 8502）
 
 ```bash
-streamlit run web/app.py
+# macOS
+./scripts/start_web.sh
+
+# Windows
+scripts\start_web.bat
 ```
 
 ## 6. iOS 最小查看端
@@ -117,7 +172,8 @@ ANTHROPIC_API_KEY=your-claude-key
 ## 10. 一次完整演练清单（本地）
 
 1. **准备环境变量**
-   - `copy .env.example .env`
+   - macOS: `cp .env.example .env`
+   - Windows: `copy .env.example .env`
    - 填好 `OPENAI_API_KEY`（Qwen）和 `BARK_KEY`
 2. **跑一次全链路**
    - `python src/main.py`
@@ -138,3 +194,10 @@ ANTHROPIC_API_KEY=your-claude-key
    - `GET /digest/2026-07-09`
    - `GET /digest?category=科技&days=7`
 
+## 11. Git 忽略说明
+
+`.gitignore` 已忽略：
+- `.env`（密钥）
+- `.venv/`（虚拟环境）
+- `logs/`、`*.log`（运行日志）
+- `data/*.db`、`digest/`（本地运行产物）
