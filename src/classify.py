@@ -105,7 +105,7 @@ class Classifier:
 
         prompt = _build_prompt(article)
         try:
-            text = self.llm.chat(prompt, max_tokens=300)
+            text = self.llm.chat(prompt, max_tokens=1000, purpose='classify')
             if not text:
                 return self._fallback(article)
             return _parse_classification(text, article)

@@ -111,9 +111,9 @@ def send_daily_digest(digest_text: str, biz_count: int, tech_count: int) -> int:
 
     for index, chunk in enumerate(chunks, start=1):
         if total == 1:
-            title = f'今日AI资讯（商业{biz_count}·科技{tech_count}）'
+            title = f'今日AI资讯'
         else:
-            title = f'今日AI资讯 {index}/{total}（商业{biz_count}·科技{tech_count}）'
+            title = f'今日AI资讯 {index}/{total}'
         ok, detail = send_bark(key, title, chunk, server=server)
         if ok:
             sent += 1
@@ -136,9 +136,9 @@ def send_test_notice(verbose: bool = False) -> tuple[bool, str]:
 
 
 if __name__ == '__main__':
-    from dotenv import load_dotenv
+    from env_config import load_project_env
 
-    load_dotenv()
+    load_project_env()
     verbose = '--verbose' in sys.argv or '-v' in sys.argv
     key = os.getenv('BARK_KEY', '').strip()
     if key:

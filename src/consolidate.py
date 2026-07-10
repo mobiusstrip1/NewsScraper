@@ -113,6 +113,11 @@ def consolidate_digest(rows: list[dict]) -> tuple[str, int, int]:
     if not client.available or not selected:
         return base_text, len(biz), len(tech)
 
+    enable_polish = os.getenv('LLM_ENABLE_POLISH', 'true').strip().lower() in ('1', 'true', 'yes')
+    if not enable_polish:
+        logging.info('LLM polish disabled (LLM_ENABLE_POLISH=false), using rule-based digest')
+        return base_text, len(biz), len(tech)
+
     prompt = POLISH_PROMPT.format(
         N_BIZ=len(biz),
         N_TECH=len(tech),
@@ -133,7 +138,7 @@ def consolidate_digest(rows: list[dict]) -> tuple[str, int, int]:
     )
     try:
         logging.info('Polishing digest in Chinese (%s biz + %s tech)...', len(biz), len(tech))
-        text = client.chat(prompt, max_tokens=2500)
+        text = client.chat(prompt, max_tokens=5000, purpose='polish')
         if text and '【商业】' in text and '【科技】' in text:
             return (
                 text.strip(),
