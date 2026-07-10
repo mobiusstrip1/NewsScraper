@@ -1,4 +1,0 @@
-2026-07-09 03:58:12,149 INFO Fetched=84 New=84 Digest=digest\2026-07-09.md
-2026-07-09 04:10:05,917 INFO Fetched=84 New=5 Digest=digest\2026-07-09.md
-2026-07-09 04:40:49,311 WARNING BARK_KEY is empty, skip notification
-2026-07-09 04:40:49,311 INFO Fetched=84 New=4 Digest=digest\2026-07-09.md BarkSent=0
