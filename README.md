@@ -13,11 +13,23 @@ cp .env.example .env
 
 ### Windows
 
+**PowerShell / CMD：**
+
 ```bat
 scripts\setup_venv.bat
 .venv\Scripts\activate.bat
 copy .env.example .env
 ```
+
+**Git Bash（MINGW64）：**
+
+```bash
+chmod +x scripts/*.sh
+./scripts/setup_venv.sh
+source .venv/Scripts/activate
+```
+
+注意：不要执行 `bash scripts/setup_venv.bat`（`.bat` 只能给 CMD 用）。
 
 你可以按 key 自动路由不同模型：
 - `LLM_PROVIDER=auto`：优先走 OpenAI-compatible（如 Qwen），否则走 Anthropic。
@@ -125,11 +137,11 @@ scripts\start_web.bat
 
 ## 7. Bark 推送（手机直接看正文）
 
-1. iPhone 安装 Bark，复制 App 首页显示的 Key。
+1. iPhone 安装 Bark，打开 App **首页**复制 **Key**（不是 Settings 里的 Device Token）。
 2. 在 `.env` 填写 `BARK_KEY=你的Key`。
-3. 先测连通：
+3. 先测连通（会打印 Bark 真实返回）：
    ```bash
-   python src/notify.py
+   python src/notify.py --verbose
    ```
 4. 跑主流程后会推送**完整摘要正文**（不是仅“已生成X条”）：
    ```bash

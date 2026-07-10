@@ -5,9 +5,21 @@
   - name: TechCrunch Funding
     url: https://techcrunch.com/tag/funding/feed/
     category_hint: business
+  - name: TechCrunch IPO
+    url: https://techcrunch.com/tag/ipo/feed/
+    category_hint: business
+  - name: TechCrunch Startups
+    url: https://techcrunch.com/category/startups/feed/
+    category_hint: business
+  - name: Fortune Term Sheet
+    url: https://fortune.com/feed/fortune-term-sheet/
+    category_hint: business
   - name: VentureBeat AI
     url: https://venturebeat.com/category/ai/feed/
     category_hint: mixed
+  - name: VentureBeat Enterprise
+    url: https://venturebeat.com/category/enterprise/feed/
+    category_hint: business
   - name: The Verge
     url: https://www.theverge.com/rss/index.xml
     category_hint: tech
@@ -23,7 +35,9 @@
   - name: Hacker News AI/Robotics
     url: https://hnrss.org/newest?q=AI+OR+robotics+OR+humanoid
     category_hint: mixed
+  - name: Hacker News Funding/IPO
+    url: https://hnrss.org/newest?q=funding+OR+IPO+OR+acquisition+OR+%22Series+A%22+OR+%22Series+B%22+OR+valuation
+    category_hint: business
   - name: OpenAI Blog
     url: https://openai.com/blog/rss.xml
     category_hint: mixed
-

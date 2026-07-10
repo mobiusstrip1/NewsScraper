@@ -4,9 +4,19 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-python3 -m venv .venv
 # shellcheck disable=SC1091
-source .venv/bin/activate
+source "$(dirname "$0")/common.sh"
+
+PYTHON="$(resolve_python)"
+echo "Using ${PYTHON} to create virtual environment..."
+
+if ! "$PYTHON" -m venv .venv; then
+  echo "Failed to create .venv with ${PYTHON}." >&2
+  echo "Try manually: python -m venv .venv" >&2
+  exit 1
+fi
+
+activate_venv_if_exists
 pip install -r requirements.txt
 
 if [[ ! -f ".env" ]]; then
@@ -14,4 +24,8 @@ if [[ ! -f ".env" ]]; then
   echo "Created .env from .env.example"
 fi
 
-echo "Done. Activate with: source .venv/bin/activate"
+if [[ -f ".venv/Scripts/activate" ]]; then
+  echo "Done. Activate with: source .venv/Scripts/activate"
+else
+  echo "Done. Activate with: source .venv/bin/activate"
+fi

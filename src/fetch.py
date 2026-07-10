@@ -6,6 +6,7 @@ import feedparser
 import yaml
 
 from models import Article
+from text_utils import clean_text
 
 
 def _parse_published(entry) -> datetime | None:
@@ -48,7 +49,7 @@ def fetch_recent_articles(hours: int = 48) -> list[Article]:
                 link = (getattr(entry, 'link', '') or '').strip()
                 if not title or not link:
                     continue
-                summary = (getattr(entry, 'summary', '') or '').strip()
+                summary = clean_text((getattr(entry, 'summary', '') or '').strip(), 1500)
                 results.append(
                     Article(
                         title=title,

@@ -4,9 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-if [[ -f ".venv/bin/activate" ]]; then
-  # shellcheck disable=SC1091
-  source ".venv/bin/activate"
-fi
+# shellcheck disable=SC1091
+source "$(dirname "$0")/common.sh"
+activate_venv_if_exists
 
 python -m uvicorn src.api:app --host 127.0.0.1 --port 7800
